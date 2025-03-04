@@ -91,7 +91,7 @@ class RedSintetizada(ABC):
         pass
 
 class FosterI(RedSintetizada):
-    def __init__(self, ceros, polos, A):
+    def __init__(self, ceros, polos, A=1):
         super().__init__()
         residuos = SintesisRedes.sintetizar_por_foster_I(ceros, polos, A)
         self._ceros = ceros

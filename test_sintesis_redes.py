@@ -49,3 +49,30 @@ def test_fosterI_elementos():
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
+
+
+def test_fosterII_polos_y_ceros():
+    redes = [
+        (FosterI([1,4], [2, 6, 0], 1), ([1, 4],[2,6,0])),
+        (FosterI([0, 2, 4], [1,3], 5), ([0,2,4], [1,3],))
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.polos_y_ceros() == pytest.approx(resultado_esperado)
+
+
+def test_fosterII_residuos():
+    redes = [
+        (FosterI([9, 4, 0], [2, 8]), [0, 7/3, 2/3, 1]),
+        (FosterI([0,2],[2.28**2, 0.61**2]), [0, 0.6627022, 0.33729772,0])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
+
+
+def test_fosterII_elementos():
+    redes = [
+        (FosterI([9, 4, 0], [2, 8]), [zoo, 7/6, 3/7, 1/12, 3/2, 1]),
+        (FosterI([0,2],[2.28**2, 0.61**2]), [zoo, 0.6627022/(2.28**2), 1/0.6627022, 0.33729772/(0.61**2), 1/0.33729772,  0])
+    ]
+    for red, resultado_esperado in redes:
+        assert red.elementos() == pytest.approx(resultado_esperado)
