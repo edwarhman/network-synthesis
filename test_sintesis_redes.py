@@ -49,5 +49,3 @@ def test_fosterI_elementos():
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
-        pass
-    assert True
