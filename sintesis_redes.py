@@ -1,4 +1,5 @@
 import sympy as sp
+from abc import ABC, abstractmethod
 
 
 class SintesisRedes:
@@ -16,32 +17,34 @@ class SintesisRedes:
         self.polinomio = self.construir_polinomio(ceros, polos, A)
 
 
-    def sintetizar_por_foster_I(self):
+    @staticmethod
+    def sintetizar_por_foster_I(ceros, polos, A):
         """
         Sintetiza una red de Foster I
         :return: Polinomio de la red
         """
-        s = self.s
-        k_inf = self.calcular_limite(self.polinomio / s, s, sp.oo)
-        k0 = self.calcular_limite(self.polinomio * s, s, 0)
+        s = sp.symbols('s')
+        polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
+        k_inf = SintesisRedes.calcular_limite(polinomio / s, s, sp.oo)
+        k0 = SintesisRedes.calcular_limite(polinomio * s, s, 0)
         ks = []
-        for polo in self.polos:
+        for polo in polos:
             if(polo == 0):
                 continue
-            polinomio = (self.polinomio * (s**2 + polo)/s).subs(s, s**(1/2))
-            ki = self.calcular_limite(polinomio, s, -polo)
+            polinomio_ajustado = (polinomio * (s**2 + polo)/s).subs(s, s**(1/2))
+            ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
             ks.append(ki)
         return (k_inf, k0) + tuple(ks)
     
-
-    def construir_polinomio(self, ceros, polos, A):
+    @staticmethod
+    def construir_polinomio(ceros, polos, A=1):
         """
         Construye un polinomio a partir de sus ceros y polos
         :param ceros: Ceros del polinomio
         :param polos: Polos del polinomio
         :return: Polinomio
         """
-        s = self.s
+        s = sp.symbols('s')
         polinomio = A
         for cero in ceros:
             if(cero != 0):
@@ -55,8 +58,8 @@ class SintesisRedes:
                 polinomio /= s
         return polinomio
     
-
-    def calcular_limite(self, polinomio, variable, punto_a_evaluar):
+    @staticmethod
+    def calcular_limite(polinomio, variable, punto_a_evaluar):
         """
         Calcula el limite de un polinomio en un punto
         :param polinomio: Polinomio a evaluar
@@ -64,4 +67,47 @@ class SintesisRedes:
         :return: Limite del polinomio en el punto
         """
         return sp.limit(polinomio, variable , punto_a_evaluar)
+
+
+class RedSintetizada(ABC):
+    @abstractmethod
+    def polos_y_ceros(self):
+        pass
+
+    @abstractmethod
+    def residuos(self):
+        pass
+
+    def polinomio(self):
+        pass
+
+    @abstractmethod
+    def plot(self):
+        pass
+
+    @abstractmethod
+    def elementos(self):
+        pass
+
+class FosterI(RedSintetizada):
+    def __init__(self, ceros, polos, A):
+        super().__init__()
+        residuos = SintesisRedes.sintetizar_por_foster_I(ceros, polos, A)
+        self._ceros = ceros
+        self._polos = polos
+        self._residuos = residuos
+        self._polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
+
+    
+    def residuos(self):
+        return self._residuos
+
+    def polos_y_ceros(self):
+        return (self._ceros, self._polos)
+
+    def plot(self):
+        return super().plot()
+
+    def elementos(self):
+        return super().elementos()
 
