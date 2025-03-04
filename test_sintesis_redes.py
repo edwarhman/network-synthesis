@@ -41,10 +41,11 @@ def test_fosterI_polos_y_ceros():
         assert sintesis_foster.polos_y_ceros() == pytest.approx(resultado_esperado)
 
 
-def test_foster_elementos():
+def test_fosterI_elementos():
     redes = [
         (FosterI([2, 6, 0], [1, 4], 1), [zoo, 5/3, 3/5, 1/3, 3/4, 1]),
-        (FosterI([1, 3], [0, 2, 4], 5), [8/15, 5/8, 4/5, 15/32, 8/15, 0])
+        (FosterI([1, 3], [0, 2, 4], 5), [8/15, 5/8, 4/5, 15/32, 8/15, 0]),
+        (FosterI([(3+5**(1/2))/2, (3-5**(1/2))/2], [0, 2], 1), [2,1/4,2,1]),
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
