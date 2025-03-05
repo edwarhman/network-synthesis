@@ -139,7 +139,7 @@ class FosterI(RedSintetizada):
         ks.append(k_inf)
         return ks
 
-class FosterRC(RedSintetizada):
+class FosterIRC(RedSintetizada):
     def __init__(self, ceros, polos, A=1):
         super().__init__()
         self._ceros = ceros
