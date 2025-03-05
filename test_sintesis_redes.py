@@ -1,4 +1,4 @@
-from sintesis_redes import SintesisRedes, FosterI, FosterIRC
+from sintesis_redes import SintesisRedes, FosterI, FosterIRC, FosterIIRC
 from sympy import symbols, zoo
 import pytest
 
@@ -86,6 +86,21 @@ def test_fosterRC_residuos():
 def test_fosterII_elementos():
     redes = [
         (FosterIRC([2], [1,3]), [zoo, 1/2, 2, 1/6, 2, 0])
+    ]
+    for red, resultado_esperado in redes:
+        assert red.elementos() == pytest.approx(resultado_esperado)
+
+def test_fosterRC_residuos():
+    redes = [
+        (FosterIIRC([1,3], [2]), [3/2, 1/2, 1])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
+
+
+def test_fosterII_elementos():
+    redes = [
+        (FosterIIRC([1,3], [2]), [2/3, 1/4, 2, 1])
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)

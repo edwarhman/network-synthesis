@@ -192,3 +192,58 @@ class FosterIRC(RedSintetizada):
             ks.append(ki)
         ks.append(k_inf)
         return ks
+
+
+class FosterIIRC(RedSintetizada):
+    def __init__(self, ceros, polos, A=1):
+        super().__init__()
+        self._ceros = ceros
+        self._polos = polos
+        self._polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
+        residuos = self.sintetizar()
+        self._residuos = residuos
+
+    
+    def residuos(self):
+        return self._residuos
+
+    def polos_y_ceros(self):
+        return (self._ceros, self._polos)
+
+    def plot(self):
+        return super().plot()
+
+    def elementos(self):
+        idx = 0
+        elementos = [1/self._residuos[0]]
+        for residuo in self._residuos[1:-1]:
+            polos_no_nulos = [polo for polo in self._polos if polo != 0]
+            inductancia = residuo / polos_no_nulos[idx]
+            capacitancia = 1 / residuo
+            elementos.append(inductancia)
+            elementos.append(capacitancia)
+            idx += 1
+
+        elementos.append(self._residuos[-1])
+
+        return elementos
+
+    def sintetizar(self):
+        """
+        Sintetiza una red de Foster I
+        :return: Polinomio de la red
+        """
+        s = sp.symbols('s')
+        polinomio = self._polinomio
+        polos = self._polos
+        k_inf = SintesisRedes.calcular_limite(polinomio/s, s, sp.oo)
+        k0 = SintesisRedes.calcular_limite(polinomio, s, 0)
+        ks = [k0]
+        for polo in polos:
+            if(polo == 0):
+                continue
+            polinomio_ajustado = (polinomio / s * (s + polo))
+            ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
+            ks.append(ki)
+        ks.append(k_inf)
+        return ks
