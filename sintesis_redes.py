@@ -14,11 +14,11 @@ class SintesisRedes:
         self.ceros = ceros
         self.polos = polos
         self.A = A
-        self.polinomio = self.construir_polinomio(ceros, polos, A)
+        self.polinomio = self.construir_polinomio_complejos_conjugados(ceros, polos, A)
 
 
     @staticmethod
-    def construir_polinomio(ceros, polos, A=1):
+    def construir_polinomio_complejos_conjugados(ceros, polos, A=1):
         """
         Construye un polinomio a partir de sus ceros y polos
         :param ceros: Ceros del polinomio
@@ -38,6 +38,17 @@ class SintesisRedes:
             else:
                 polinomio /= s
         return polinomio
+        
+    @staticmethod        
+    def construir_polinomio(ceros, polos, A=1):
+        s = sp.symbols('s')
+        polinomio = A
+        for cero in ceros:
+            polinomio *= (s + cero)
+        for polo in polos:
+            polinomio /= (s + polo)
+        return polinomio
+
     
     @staticmethod
     def calcular_limite(polinomio, variable, punto_a_evaluar):
@@ -79,7 +90,7 @@ class FosterI(RedSintetizada):
         super().__init__()
         self._ceros = ceros
         self._polos = polos
-        self._polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
+        self._polinomio = SintesisRedes.construir_polinomio_complejos_conjugados(ceros, polos, A)
         residuos = self.sintetizar()
         self._residuos = residuos
 
@@ -123,6 +134,60 @@ class FosterI(RedSintetizada):
             if(polo == 0):
                 continue
             polinomio_ajustado = (polinomio * (s**2 + polo)/s).subs(s, s**(1/2))
+            ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
+            ks.append(ki)
+        ks.append(k_inf)
+        return ks
+
+class FosterRC(RedSintetizada):
+    def __init__(self, ceros, polos, A=1):
+        super().__init__()
+        self._ceros = ceros
+        self._polos = polos
+        self._polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
+        residuos = self.sintetizar()
+        self._residuos = residuos
+
+    
+    def residuos(self):
+        return self._residuos
+
+    def polos_y_ceros(self):
+        return (self._ceros, self._polos)
+
+    def plot(self):
+        return super().plot()
+
+    def elementos(self):
+        idx = 0
+        elementos = [1/self._residuos[0]]
+        for residuo in self._residuos[1:-1]:
+            polos_no_nulos = [polo for polo in self._polos if polo != 0]
+            inductancia = residuo / polos_no_nulos[idx]
+            capacitancia = 1 / residuo
+            elementos.append(inductancia)
+            elementos.append(capacitancia)
+            idx += 1
+
+        elementos.append(self._residuos[-1])
+
+        return elementos
+
+    def sintetizar(self):
+        """
+        Sintetiza una red de Foster I
+        :return: Polinomio de la red
+        """
+        s = sp.symbols('s')
+        polinomio = self._polinomio
+        polos = self._polos
+        k_inf = SintesisRedes.calcular_limite(polinomio, s, sp.oo)
+        k0 = SintesisRedes.calcular_limite(polinomio * s, s, 0)
+        ks = [k0]
+        for polo in polos:
+            if(polo == 0):
+                continue
+            polinomio_ajustado = (polinomio * (s + polo))
             ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
             ks.append(ki)
         ks.append(k_inf)

@@ -1,4 +1,4 @@
-from sintesis_redes import SintesisRedes, FosterI
+from sintesis_redes import SintesisRedes, FosterI, FosterRC
 from sympy import symbols, zoo
 import pytest
 
@@ -6,8 +6,8 @@ s = symbols('s')
 
 def test_construir_polinomio():
     redes = [
-        (SintesisRedes.construir_polinomio([1, 2, 0], [3, 4]), (s**2 + 1)*(s**2 + 2)*s/(s**2 + 3)/(s**2 + 4)),
-        (SintesisRedes.construir_polinomio([1, 4], [2, 8, 0]), (s**2 + 1)*(s**2 + 4)/(s**2 + 2)/(s**2 + 8)/s),
+        (SintesisRedes.construir_polinomio_complejos_conjugados([1, 2, 0], [3, 4]), (s**2 + 1)*(s**2 + 2)*s/(s**2 + 3)/(s**2 + 4)),
+        (SintesisRedes.construir_polinomio_complejos_conjugados([1, 4], [2, 8, 0]), (s**2 + 1)*(s**2 + 4)/(s**2 + 2)/(s**2 + 8)/s),
     ]
     for red, resultado_esperado in redes:
         assert red == resultado_esperado
@@ -66,3 +66,19 @@ def test_fosterII_elementos():
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
+
+
+def test_fosterRC_polos_y_ceros():
+    redes = [
+        (FosterRC([2], [1,3]), ([2], [1,3]))
+    ]
+    for red, resultado_esperado in redes:
+        assert red.polos_y_ceros() == pytest.approx(resultado_esperado)
+
+def test_fosterRC_residuos():
+    redes = [
+        (FosterRC([2], [1,3]), [0, 1/2, 1/2, 0])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
+
