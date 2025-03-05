@@ -18,26 +18,6 @@ class SintesisRedes:
 
 
     @staticmethod
-    def sintetizar_por_foster_I(ceros, polos, A):
-        """
-        Sintetiza una red de Foster I
-        :return: Polinomio de la red
-        """
-        s = sp.symbols('s')
-        polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
-        k_inf = SintesisRedes.calcular_limite(polinomio / s, s, sp.oo)
-        k0 = SintesisRedes.calcular_limite(polinomio * s, s, 0)
-        ks = [k0]
-        for polo in polos:
-            if(polo == 0):
-                continue
-            polinomio_ajustado = (polinomio * (s**2 + polo)/s).subs(s, s**(1/2))
-            ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
-            ks.append(ki)
-        ks.append(k_inf)
-        return ks
-    
-    @staticmethod
     def construir_polinomio(ceros, polos, A=1):
         """
         Construye un polinomio a partir de sus ceros y polos
@@ -90,14 +70,18 @@ class RedSintetizada(ABC):
     def elementos(self):
         pass
 
+    @abstractmethod
+    def sintetizar(self):
+        pass
+
 class FosterI(RedSintetizada):
     def __init__(self, ceros, polos, A=1):
         super().__init__()
-        residuos = SintesisRedes.sintetizar_por_foster_I(ceros, polos, A)
         self._ceros = ceros
         self._polos = polos
-        self._residuos = residuos
         self._polinomio = SintesisRedes.construir_polinomio(ceros, polos, A)
+        residuos = self.sintetizar()
+        self._residuos = residuos
 
     
     def residuos(self):
@@ -124,3 +108,22 @@ class FosterI(RedSintetizada):
 
         return elementos
 
+    def sintetizar(self):
+        """
+        Sintetiza una red de Foster I
+        :return: Polinomio de la red
+        """
+        s = sp.symbols('s')
+        polinomio = self._polinomio
+        polos = self._polos
+        k_inf = SintesisRedes.calcular_limite(polinomio / s, s, sp.oo)
+        k0 = SintesisRedes.calcular_limite(polinomio * s, s, 0)
+        ks = [k0]
+        for polo in polos:
+            if(polo == 0):
+                continue
+            polinomio_ajustado = (polinomio * (s**2 + polo)/s).subs(s, s**(1/2))
+            ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
+            ks.append(ki)
+        ks.append(k_inf)
+        return ks
