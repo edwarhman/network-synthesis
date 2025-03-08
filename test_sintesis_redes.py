@@ -1,6 +1,7 @@
-from sintesis_redes import SintesisRedes, FosterI, FosterIRC, FosterIIRC
-from sympy import symbols, zoo
+from sintesis_redes import SintesisRedes, FosterI, FosterIRC, FosterIIRC, FosterIRL, FosterIIRL, CauerI
+from sympy import symbols, zoo, div
 import pytest
+import numpy as np
 
 s = symbols('s')
 
@@ -36,6 +37,7 @@ def test_fosterI_elementos():
         (FosterI([2, 6, 0], [1, 4], 1), [zoo, 5/3, 3/5, 1/3, 3/4, 1]),
         (FosterI([1, 3], [0, 2, 4], 5), [8/15, 5/8, 4/5, 15/32, 8/15, 0]),
         (FosterI([(3+5**(1/2))/2, (3-5**(1/2))/2], [0, 2], 1), [2,1/4,2,1]),
+        # (FosterI([1, 4], [3,9]), [zoo, 1/2, 2, 1/6, 2, 0])
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
@@ -83,24 +85,39 @@ def test_fosterRC_residuos():
         assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
 
 
-def test_fosterII_elementos():
+def test_fosterI_RC_elementos():
     redes = [
-        (FosterIRC([2], [1,3]), [zoo, 1/2, 2, 1/6, 2, 0])
+        (FosterIRC([2], [1,3]), [zoo, 1/2, 2, 1/6, 2, 0]),
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
 
-def test_fosterRC_residuos():
+def test_fosterII_RC_residuos():
     redes = [
-        (FosterIIRC([1,3], [2]), [3/2, 1/2, 1])
+        (FosterIIRC([1,3], [2]), [3/2, 1/2, 1]),
     ]
     for sintesis_foster, resultado_esperado in redes:
         assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
 
 
-def test_fosterII_elementos():
+def test_fosterII_RC_elementos():
     redes = [
         (FosterIIRC([1,3], [2]), [2/3, 1/4, 2, 1])
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
+
+def test_fosterII_RC_residuos():
+    redes = [
+        (FosterIRL([1, 4], [3,9]), [4/27, 1/9, 20/27, 0])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
+
+
+def test_cauer_I():
+    redes = [
+        (CauerI(s*(s**2+4)*(s**2+25), (s**2+1)*(s**2+9)), [1, 1/19, 19**2/99, 11**2*9/(640*19), 640/99])
+    ]
+    for red, resultado_esperado in redes:
+        assert [div(elemento, s)[0] for elemento in red.elementos()] == pytest.approx(resultado_esperado)

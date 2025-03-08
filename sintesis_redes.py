@@ -1,4 +1,7 @@
 import sympy as sp
+from sympy.plotting import plot
+from sympy.physics.control.lti import TransferFunction
+from sympy.physics.control.control_plots import pole_zero_plot
 from abc import ABC, abstractmethod
 
 
@@ -84,6 +87,17 @@ class RedSintetizada(ABC):
     @abstractmethod
     def sintetizar(self):
         pass
+
+    def graficar(self, destination, xlim, ylim):
+        polinomio = self._polinomio
+        p1 = plot(polinomio, xlim=xlim, ylim=ylim)
+        p1.save(destination)
+
+    def graficar_polos_zeros(self, destination):
+        tf = TransferFunction(self._polinomio, sp.symbols('s'))
+        p = pole_zero_plot(tf)
+        p.save(destination)
+
 
 class FosterI(RedSintetizada):
     def __init__(self, ceros, polos, A=1):
@@ -247,3 +261,42 @@ class FosterIIRC(RedSintetizada):
             ks.append(ki)
         ks.append(k_inf)
         return ks
+
+class FosterIRL(FosterIIRC):
+    pass
+
+class FosterIIRL(FosterIRC):
+    pass
+
+class CauerI(RedSintetizada):
+    def __init__(self, numerador, denominador):
+        self._numerador = numerador
+        self._denominador = denominador
+        self._polinomio = numerador / denominador
+        self._elementos = self.sintetizar()
+
+    def sintetizar(self):
+        numerador = sp.expand(self._numerador)
+        denominador = sp.expand(self._denominador)
+        print(numerador, denominador)
+        print(sp.div(numerador, denominador))
+        cocientes = []
+        residuo = 99
+        while (residuo != 0):
+            cociente, residuo = sp.div(numerador, denominador)
+            cocientes.append(cociente)
+            numerador = denominador
+            denominador = residuo
+        return cocientes
+
+    def residuos(self):
+        return self._elementos
+    
+    def elementos(self):
+        return self._elementos
+
+    def polos_y_ceros(self):
+        return self._numerador
+
+    def plot(self):
+        return super().plot()
