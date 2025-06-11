@@ -273,13 +273,56 @@ class CauerI(RedSintetizada):
         self._numerador = numerador
         self._denominador = denominador
         self._polinomio = numerador / denominador
+        self._s = sp.symbols('s')
         self._elementos = self.sintetizar()
 
     def sintetizar(self):
         numerador = sp.expand(self._numerador)
         denominador = sp.expand(self._denominador)
+        cocientes = []
+        residuo = 999
+        while (residuo != 0):
+            polyDen = sp.Poly(denominador, self._s)
+            polyNum = sp.Poly(numerador, self._s)
+            if polyDen.degree() == 0 and polyNum.degree() != 0:
+                cociente = self._s * polyNum.LC() / denominador 
+                residuo = numerador - self._s * polyNum.LC() 
+                print(cociente, residuo)
+            elif polyDen.degree() == 0 and polyNum.degree() == 0:
+                cociente = numerador / denominador
+                residuo = numerador % denominador
+            else:
+                cociente, residuo = sp.div(numerador, denominador)
+            cocientes.append(cociente)
+            numerador = denominador
+            denominador = residuo
+        return cocientes
+
+    def residuos(self):
+        return self._elementos
+    
+    def elementos(self):
+        return self._elementos
+
+    def polos_y_ceros(self):
+        return self._numerador
+
+    def plot(self):
+        return super().plot()
+
+class CauerII(RedSintetizada):
+    def __init__(self, numerador, denominador):
+        self._numerador = numerador
+        self._denominador = denominador
+        self._polinomio = numerador / denominador
+        self._elementos = self.sintetizar()
+
+    def sintetizar(self):
+        numerador = sp.expand(self._numerador)
+        numerador = sum(term for term in reversed(numerador.as_ordered_terms()))
+        denominador = sp.expand(self._denominador)
+        denominador = sum(term for term in reversed(denominador.as_ordered_terms()))
         print(numerador, denominador)
-        print(sp.div(numerador, denominador))
         cocientes = []
         residuo = 99
         while (residuo != 0):
