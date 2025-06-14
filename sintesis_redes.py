@@ -315,21 +315,36 @@ class CauerII(RedSintetizada):
         self._numerador = numerador
         self._denominador = denominador
         self._polinomio = numerador / denominador
+        self._s = sp.symbols('s')
         self._elementos = self.sintetizar()
 
     def sintetizar(self):
-        numerador = sp.expand(self._numerador)
-        numerador = sum(term for term in reversed(numerador.as_ordered_terms()))
-        denominador = sp.expand(self._denominador)
-        denominador = sum(term for term in reversed(denominador.as_ordered_terms()))
-        print(numerador, denominador)
+        numerador = self._numerador
+        denominador = self._denominador
         cocientes = []
         residuo = 99
         while (residuo != 0):
-            cociente, residuo = sp.div(numerador, denominador)
-            cocientes.append(cociente)
-            numerador = denominador
-            denominador = residuo
+            numerador_coeffs = sp.expand(numerador).as_coefficients_dict()
+            denominador_coeffs = sp.expand(denominador).as_coefficients_dict()
+            # Find the lowest degree (minor degree) term in numerador and denominador
+            min_degree_numerador = min([k.as_coeff_exponent(self._s)[1] for k in numerador_coeffs.keys()])
+            min_degree_denominador = min([k.as_coeff_exponent(self._s)[1] for k in denominador_coeffs.keys()])
+
+            # Get the coefficients corresponding to the lowest degree
+            min_coeff_numerador = numerador_coeffs.get(self._s**min_degree_numerador, 0)
+            min_coeff_denominador = denominador_coeffs.get(self._s**min_degree_denominador, 0)
+            
+            if min_degree_numerador > min_degree_denominador:
+                aux = denominador 
+                denominador = numerador
+                numerador = aux
+                cocientes.append(0)
+            else: 
+                cociente = min_coeff_numerador / min_coeff_denominador * self._s**(min_degree_numerador - min_degree_denominador)
+                residuo = sp.expand(numerador - cociente * denominador)
+                cocientes.append(cociente)
+                numerador = denominador
+                denominador = residuo
         return cocientes
 
     def residuos(self):

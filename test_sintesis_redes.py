@@ -1,5 +1,5 @@
 from sintesis_redes import SintesisRedes, FosterI, FosterIRC, FosterIIRC, FosterIRL, FosterIIRL, CauerI, CauerII
-from sympy import symbols, zoo, div, Poly
+from sympy import symbols, zoo, Poly, sympify
 import pytest
 import numpy as np
 
@@ -147,8 +147,17 @@ def test_cauer_I():
 def test_cauer_II():
     redes = [
         # (CauerII(10*s*(s**2+4)*(s**2+2), (s**2+1)*(s**2+3)), [1, 1/19, 19**2/99, 11**2*9/(640*19), 640/99, 2]),
-        (CauerII((s**2+1)*(s**2+4), s*(s**2+2)*(s**2+8)), [0,1, 0.2, 25/13, 169/280, 14/13])
+        # (CauerII((s**2+1)*(s**2+4), s*(s**2+2)*(s**2+8)), [1, 0.2, 25/13, 169/280, 14/13]),
+        (CauerII(10*(s+1)*(s+3), s*(s+2)*(s+4)), [30/8, 32/70, 490/88, 484/105 ,15/22]),
+        (CauerII((s*(s**2+2)*(s**2+6)), (s**2+1)*(s**2+4)), [0,1/3, 36/7, 49/96, 3072/105, 15/96]),
+        (CauerII((10*s**5 + 60*s**3 + 80*s), (s**4 + 4*s**2 + 3)), [0, 3/80, 320/7, 49/880, 19360/42, 6/880]),
+        (CauerII((s+1), (s+2)), [1/2,4,1/2])
     ]
     for red, resultado_esperado in redes:
-        assert [div(elemento, s)[0] for elemento in red.elementos()] == pytest.approx(resultado_esperado)
+        coefficients = extract_coefficients(red.residuos())
+        assert coefficients == pytest.approx(resultado_esperado)
 
+def extract_coefficients(elementos):
+    coeffs_values = [list(sympify(elemento).as_coefficients_dict().values()) for elemento in elementos]
+    flattened_coeffs = [item for sublist in coeffs_values for item in sublist]
+    return flattened_coeffs
