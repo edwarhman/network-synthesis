@@ -86,7 +86,8 @@ def test_fosterRC_polos_y_ceros():
 
 def test_fosterRC_residuos():
     redes = [
-        (FosterIRC([2], [1,3]), [0, 1/2, 1/2, 0])
+        (FosterIRC([2], [1,3]), [0, 1/2, 1/2, 0]),
+        (FosterIRC([1,3], [0, 2, 4], 10), [15/4, 5/2, 15/4, 0])
     ]
     for sintesis_foster, resultado_esperado in redes:
         assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
@@ -95,6 +96,7 @@ def test_fosterRC_residuos():
 def test_fosterI_RC_elementos():
     redes = [
         (FosterIRC([2], [1,3]), [zoo, 1/2, 2, 1/6, 2, 0]),
+        (FosterIRC([1,3], [0, 2, 4], 10), [4/15, 5/2/2, 2/5, 15/4/4, 4/15, 0])
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)
