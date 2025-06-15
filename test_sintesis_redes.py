@@ -1,4 +1,4 @@
-from sintesis_redes import SintesisRedes, FosterI, FosterIRC, FosterIIRC, FosterIRL, FosterIIRL, CauerI, CauerII
+from sintesis_redes import FosterII, SintesisRedes, FosterI, FosterIRC, FosterIIRC, FosterIRL, FosterIIRL, CauerI, CauerII
 from sympy import symbols, zoo, Poly, sympify
 import pytest
 import numpy as np
@@ -67,11 +67,29 @@ def test_fosterII_residuos():
     for sintesis_foster, resultado_esperado in redes:
         assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
 
+def test_fosterII_residuos_2():
+    redes = [
+        (FosterII([2.28**2, 0.61**2], [0,2]), [0, 0.6627022, 0.33729772,0]),
+        (FosterII([2,8], [9, 4, 0]), [0, 7/3, 2/3, 1]),
+        # (FosterII([(3+5**(1/2))/2, (3-5**(1/2))/2], [0, 2], 1), [0, 0.6627022, 0.33729772, 0]),
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
+    
+
 
 def test_fosterII_elementos():
     redes = [
         (FosterI([9, 4, 0], [2, 8]), [zoo, 7/6, 3/7, 1/12, 3/2, 1]),
         (FosterI([0,2],[2.28**2, 0.61**2]), [zoo, 0.6627022/(2.28**2), 1/0.6627022, 0.33729772/(0.61**2), 1/0.33729772,  0])
+    ]
+    for red, resultado_esperado in redes:
+        assert red.elementos() == pytest.approx(resultado_esperado)
+
+def test_fosterII_elementos_2():
+    redes = [
+        (FosterII([2, 8], [9, 4, 0]), [zoo, 7/6, 3/7, 1/12, 3/2, 1]),
+        (FosterII([2.28**2, 0.61**2],[0,2]), [zoo, 0.6627022/(2.28**2), 1/0.6627022, 0.33729772/(0.61**2), 1/0.33729772,  0])
     ]
     for red, resultado_esperado in redes:
         assert red.elementos() == pytest.approx(resultado_esperado)

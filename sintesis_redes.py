@@ -153,6 +153,15 @@ class FosterI(RedSintetizada):
         ks.append(k_inf)
         return ks
 
+class FosterII(FosterI):
+    def __init__(self, ceros, polos, A=1):
+        self._ceros = polos
+        self._polos = ceros
+        self._polinomio = SintesisRedes.construir_polinomio_complejos_conjugados(polos, ceros, A)
+        residuos = self.sintetizar()
+        self._residuos = residuos
+
+
 class FosterIRC(RedSintetizada):
     def __init__(self, ceros, polos, A=1):
         super().__init__()
@@ -195,16 +204,16 @@ class FosterIRC(RedSintetizada):
         s = sp.symbols('s')
         polinomio = self._polinomio
         polos = self._polos
-        k_inf = SintesisRedes.calcular_limite(polinomio, s, sp.oo)
-        k0 = SintesisRedes.calcular_limite(polinomio * s, s, 0)
-        ks = [k0]
+        a_2n = SintesisRedes.calcular_limite(polinomio, s, sp.oo)
+        a_0 = SintesisRedes.calcular_limite(polinomio * s, s, 0)
+        ks = [a_0]
         for polo in polos:
             if(polo == 0):
                 continue
             polinomio_ajustado = (polinomio * (s + polo))
-            ki = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
-            ks.append(ki)
-        ks.append(k_inf)
+            a_i = SintesisRedes.calcular_limite(polinomio_ajustado, s, -polo)
+            ks.append(a_i)
+        ks.append(a_2n)
         return ks
 
 
