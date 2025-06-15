@@ -263,7 +263,19 @@ class FosterIIRC(RedSintetizada):
         return ks
 
 class FosterIRL(FosterIIRC):
-    pass
+    def elementos(self):
+        idx = 0
+        elementos = [self._residuos[0]]
+        for residuo in self._residuos[1:-1]:
+            polos_no_nulos = [polo for polo in self._polos if polo != 0]
+            inductancia = residuo / polos_no_nulos[idx]
+            resistencia = residuo
+            elementos.append(inductancia)
+            elementos.append(resistencia)
+            idx += 1
+
+        elementos.append(self._residuos[-1])
+        return elementos
 
 class FosterIIRL(FosterIRC):
     pass

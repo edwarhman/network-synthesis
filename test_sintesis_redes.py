@@ -123,13 +123,13 @@ def test_fosterI_RL_residuos():
         assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
 
 
-# def test_fosterI_RL_elementos():
-    # redes = [
-        # (FosterIRL([1, 4], [3,9]), [4/27, 1/27, 1/9, 20/243, 20/27, 0]),
-        # (FosterIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 1/5, 15.0034/3, 1/15.0034, 5])
-    # ]
-    # for sintesis_foster, resultado_esperado in redes:
-        # assert sintesis_foster.elementos() == pytest.approx(resultado_esperado)
+def test_fosterI_RL_elementos():
+    redes = [
+        (FosterIRL([1, 4], [3,9]), [4/27, 1/27, 1/9, 20/243, 20/27, 0]),
+        (FosterIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 5.00025, 15.0034/3, 15.0034, 5])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.elementos() == pytest.approx(resultado_esperado)
 
 
 def test_cauer_I():
