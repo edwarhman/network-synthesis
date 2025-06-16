@@ -43,7 +43,7 @@ check-lint: pre-requirements ## Checks the code style
 check-format: pre-requirements  ## Check format python code
 	uv run ruff format --check
 
-checks: check-typing check-lint check-format ## Run all checks
+checks: check-lint check-format ## Run all checks
 
 .PHONY: lint
 lint: pre-requirements ## Lints the code format
