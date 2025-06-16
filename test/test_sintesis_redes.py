@@ -1,4 +1,4 @@
-from sintesis_redes import FosterII, SintesisRedes, FosterI, FosterIRC, FosterIIRC, FosterIRL, FosterIIRL, CauerI, CauerII
+from src.sintesis_redes import FosterII, SintesisRedes, FosterI, FosterIRC, FosterIIRC, FosterIRL, FosterIIRL, CauerI, CauerII
 from sympy import symbols, zoo, Poly, sympify
 import pytest
 import numpy as np
