@@ -287,7 +287,21 @@ class FosterIRL(FosterIIRC):
         return elementos
 
 class FosterIIRL(FosterIRC):
-    pass
+    def __init__(self, ceros, polos, A=1):
+        self._ceros = polos
+        self._polos = ceros
+        self._polinomio = SintesisRedes.construir_polinomio(polos, ceros, A)
+        residuos = self.sintetizar()
+        self._residuos = residuos
+
+    def elementos(self):
+        elementosRC =  super().elementos()
+        elementosRL = [elemento for elemento in elementosRC]
+        for i in range(1, len(elementosRC), 2):
+            elementosRL[i] = 1 / elementosRL[i]
+        return elementosRL
+
+
 
 class CauerI(RedSintetizada):
     def __init__(self, numerador, denominador):
