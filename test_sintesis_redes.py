@@ -137,7 +137,8 @@ def test_fosterII_RC_elementos():
 def test_fosterI_RL_residuos():
     redes = [
         (FosterIRL([1, 4], [3,9]), [4/27, 1/9, 20/27, 0]),
-        (FosterIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 15.0034, 5])
+        (FosterIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 15.0034, 5]),
+        (FosterIRL([0, 2, 4], [1, 3], 1), [0, 3/2, 1/2, 1])
     ]
     for sintesis_foster, resultado_esperado in redes:
         assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
@@ -146,11 +147,29 @@ def test_fosterI_RL_residuos():
 def test_fosterI_RL_elementos():
     redes = [
         (FosterIRL([1, 4], [3,9]), [4/27, 1/27, 1/9, 20/243, 20/27, 0]),
-        (FosterIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 5.00025, 15.0034/3, 15.0034, 5])
+        (FosterIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 5.00025, 15.0034/3, 15.0034, 5]),
+        (FosterIRL([0, 2, 4], [1, 3], 1), [0, 3/2, 3/2, 1/6, 1/2, 1])
     ]
     for sintesis_foster, resultado_esperado in redes:
         assert sintesis_foster.elementos() == pytest.approx(resultado_esperado)
 
+def test_fosterII_RL_residuos():
+    redes = [
+        (FosterIIRL([1,4], [3,9]), [0, 16/3, 5/3, 1]),
+        (FosterIIRL([0, 2, 4], [1, 3], 1), [3/8, 1/4, 3/8, 0])
+        # (FosterIIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 15.0034, 5])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.residuos() == pytest.approx(resultado_esperado)
+
+def test_fosterII_RL_elementos():
+    redes = [
+        (FosterIIRL([1, 4], [3,9]), [zoo, 3/16, 3/16,  12/5, 3/5, 1]),
+        (FosterIIRL([0, 2, 4], [1, 3], 1), [8/3, 4*2, 4, 8*4/3, 8/3, zoo])
+        # (FosterIIRL([7.959, 0.484, 1.557], [1, 3], 5), [9.99634, 5.00025, 5.00025, 15.0034/3, 15.0034, 5])
+    ]
+    for sintesis_foster, resultado_esperado in redes:
+        assert sintesis_foster.elementos() == pytest.approx(resultado_esperado)
 
 def test_cauer_I():
     redes = [
