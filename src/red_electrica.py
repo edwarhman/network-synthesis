@@ -72,7 +72,10 @@ class RedElectrica(RedElectricaBase):
         coincidencias = set(ceros_dict) & set(polos_dict)
 
         for c in coincidencias:
-            if ceros_dict[c] < polos_dict[c]:
+            if ceros_dict[c] == polos_dict[c]:
+                del ceros_dict[c]
+                del polos_dict[c]
+            elif ceros_dict[c] < polos_dict[c]:
                 del ceros_dict[c]
             else:
                 del polos_dict[c]
