@@ -27,15 +27,18 @@ class RedElectricaBase(ABC):
         pass
 
     @staticmethod
-    def paralelo(red1: "RedElectrica", red2: "RedElectrica") -> "RedElectrica":
+    def paralelo(redes: list["RedElectrica"]) -> "RedElectrica":
         """
         Combina dos redes en paralelo.
-        :param red1: Primera red
-        :param red2: Segunda red
+        :param redes: Lista de redes
         :return: Nueva red combinada en paralelo
         """
-        numerador = red1.expresion() * red2.expresion()
-        denominador = red1.expresion() + red2.expresion()
+        numerador = 1
+        denominador = 0
+        for red in redes:
+            numerador *= red.expresion()
+        for red in redes:
+            denominador += numerador / red.expresion()
         return RedElectrica(numerador / denominador)
 
     @staticmethod
@@ -61,10 +64,24 @@ class RedElectrica(RedElectricaBase):
         :param expresion: Expresión de transferencia
         :return: Tupla con los ceros y polos
         """
-        num, den = self.expresion().as_numer_denom()
-        ceros = list(roots(num, s).keys())
-        polos = list(roots(den, s).keys())
-        return ceros, polos
+        num, den = self._expresion.as_numer_denom()
+        ceros_dict = roots(num, s)
+        polos_dict = roots(den, s)
+
+        # Convertir a listas de valores
+        ceros = dict(ceros_dict)
+        polos = dict(polos_dict)
+
+        # Verificar coincidencias y eliminar el de menor grado
+        coincidencias = set(ceros.keys()) & set(polos.keys())
+
+        for c in coincidencias:
+            if ceros[c] < polos[c]:
+                del ceros[c]
+            else:
+                del polos[c]
+
+        return list(ceros.keys()), list(polos.keys())
 
     def gain(self):
         raise NotImplementedError("This method should be implemented by subclasses.")
