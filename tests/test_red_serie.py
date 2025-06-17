@@ -31,6 +31,7 @@ class TestRedSerie:
         "expresion, ceros_esperados, polos_esperados",
         [
             (["s**2", "2*s", "1"], [-1], []),
+            (["16 / 3 / (s + 1)", "5 / 3 / (s + 4)", "1"], [-3, -9], [-1, -4]),
         ],
     )
     def test_ceros_y_polos(self, expresion, ceros_esperados, polos_esperados):
