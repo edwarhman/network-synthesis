@@ -65,7 +65,7 @@ class TestRedElectrica:
         red1 = RedElectrica("s + 1")
         red2 = RedElectrica("s**2 + 2*s + 1")
         # Act
-        red_paralelo = RedElectrica.paralelo(red1, red2)
+        red_paralelo = RedElectrica.paralelo([red1, red2])
         # Assert
         assert comparar_expresiones(
             red_paralelo.expresion(), "(s + 1)*(s**2 + 2*s + 1)/(s**2 + 3*s + 2)"
