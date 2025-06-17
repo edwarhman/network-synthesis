@@ -68,20 +68,16 @@ class RedElectrica(RedElectricaBase):
         ceros_dict = roots(num, s)
         polos_dict = roots(den, s)
 
-        # Convertir a listas de valores
-        ceros = dict(ceros_dict)
-        polos = dict(polos_dict)
-
         # Verificar coincidencias y eliminar el de menor grado
-        coincidencias = set(ceros.keys()) & set(polos.keys())
+        coincidencias = set(ceros_dict) & set(polos_dict)
 
         for c in coincidencias:
-            if ceros[c] < polos[c]:
-                del ceros[c]
+            if ceros_dict[c] < polos_dict[c]:
+                del ceros_dict[c]
             else:
-                del polos[c]
+                del polos_dict[c]
 
-        return list(ceros.keys()), list(polos.keys())
+        return list(ceros_dict.keys()), list(polos_dict.keys())
 
     def gain(self):
         raise NotImplementedError("This method should be implemented by subclasses.")
