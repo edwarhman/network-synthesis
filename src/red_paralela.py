@@ -5,7 +5,7 @@ class RedParalela(RedElectricaBase):
     def __init__(self, *redes):
         redes_electricas = []
         for red in redes:
-            if isinstance(red, RedElectrica):
+            if isinstance(red, RedElectricaBase):
                 redes_electricas.append(red)
             else:
                 redes_electricas.append(RedElectrica(red))
